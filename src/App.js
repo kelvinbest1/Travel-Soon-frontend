@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import userService from "./utils/userService";
 import SearchPage from "./pages/SearchPage/SearchPage";
 
+class App extends Component {
 constructor() {
   super();
   this.state = {
@@ -70,4 +71,115 @@ handleUpdateTrip = async updatedTripData => {
     () => this.props.history.push("/")
   );
 };
+
+render() {
+  return(
+    <div className="App">
+      <header className="App-header">
+        Make your next trip unforgettable. 
+        <nav>
+          <NavLink user={this.props.user}exact to="/">
+            My Trips
+          </NavLink>
+          &nbsp;&nbsp;&nbsp;
+          <NavLink exact to="/add">
+            New Trip
+          </NavLink>
+          &nbsp;&nbsp;&nbsp;
+          <NavLink exact to="/search">
+            Search Camps
+          </NavLink>
+          &nbsp;&nbsp;&nbsp;
+          <NavLink exact to="/signup">
+            Create Profile
+          </NavLink>
+          &nbsp;&nbsp;&nbsp;
+          {this.state.user ? (
+            <NavLink exact to="/login" onClick={this.handleLogout}>
+              Logout
+            </NavLink>
+          ) : (
+            <NavLink exact to="/login">
+              Login
+            </NavLink>
+          )}
+        </nav>
+      </header>
+      <main>
+        <Route
+          exact path="/" render={() => (
+            userService.getUser() ?
+              <MyTripPage
+                trips={this.state.trips}
+                user={this.state.user} 
+                handleDeleteTrip={this.handleDeleteTrip}
+                handleLogout={this.handleLogout}
+              />
+              :
+              <Redirect to="/login"
+              />
+          )}
+        />
+        {/* <Route path='/users/:id' render={(props) => (
+            userService.getUser() ?
+              <MyTripPage 
+                trips={this.state.user.trips}
+                user={this.state.user} 
+                handleDeleteTrip={this.handleDeleteTrip}
+                handleLogout={this.handleLogout}
+              />
+            :
+              <Redirect to='/login' />
+          )}/> */}
+        <Route
+          exact path="/add"
+          render={() => <NewTripPage user={this.state.user} handleNewTrip={this.handleNewTrip} />}
+        />
+        <Route 
+          exact path="/details" 
+          render={({location}) => <TripDetailPage location={location} />}
+        />
+        <Route 
+          exact path="/search" 
+          render={({location}) => <SearchPage location={location} />}
+        />
+        <Route 
+          exact path="/edit" render={({location}) => (
+            <EditTripPage
+              handleUpdateTrip={this.handleUpdateTrip}
+              location={location}
+            />
+          )}
+        />
+        <Route 
+          exact path="/signup" render={({history}) => (
+            <SignupPage
+              history={history}
+              handleSignupOrLogin={this.handleSignupOrLogin}
+            />
+          )} 
+        />
+        <Route 
+          exact path="/login" render={({history}) => (
+            <LoginPage
+              handleSignupOrLogin={this.handleSignupOrLogin}
+              history={history}
+            />
+          )} 
+        />
+        <Route 
+          exact path="/logout" render={({history}) => (
+            <LoginPage
+              handleLogout={this.handleLogout}
+              history={history}
+            />
+          )} 
+        />
+      </main>
+    </div>
+  );
+}
+}
+
+export default App;
 

@@ -10,3 +10,20 @@ import SignupPage from "./pages/SignupPage/SignupPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import userService from "./utils/userService";
 import SearchPage from "./pages/SearchPage/SearchPage";
+
+constructor() {
+  super();
+  this.state = {
+    trips: [],
+    user: userService.getUser(),
+  };
+}
+
+handleLogout = () => {
+  userService.logout();
+  this.setState({user: null, trips: []});
+}
+
+handleSignupOrLogin = () => {
+  this.setState({user: userService.getUser()}, () => this.getTrips());
+}

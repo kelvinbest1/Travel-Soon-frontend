@@ -1,15 +1,15 @@
+import React, { useState } from 'react';
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import userService from "../../utils/userService";
 
-class SignupForm extends Component {
+function SignUpForm() {
 
-    state = {
-        name: "",
-        email: "",
-        password: "",
-        passwordConf: ""
-    };
+    const [name, setName]= useState('')
+     const [email, setEmail]= useState('')  
+      const [password, setPassword]= useState('') 
+        const [passwordConf, setPasswordconf]= useState('')
+    
 
     handleChange = (e) => {
         this.props.updateMessage("");
@@ -36,7 +36,8 @@ class SignupForm extends Component {
         return !(this.state.name && this.state.email && this.state.password === this.state.passwordConf);
     }
 
-    render() {
+
+    
         return (
             <div>
                 <header className="header-footer">Sign Up</header>
@@ -70,7 +71,7 @@ class SignupForm extends Component {
                 </form>
             </div>
         );
-    }
-}
+        }
+
 
 export default SignupForm;

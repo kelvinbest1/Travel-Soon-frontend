@@ -1,9 +1,10 @@
+import React, { useState } from 'react';
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import "./EditTripPage.css"; 
 
 class EditTripPage extends Component {
-    state = {
+    const [invalidForm, setInvalidForm]= useState(false)
         invalidForm: false,
         formData: this.props.location.state.trip,
     };

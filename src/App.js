@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import React, {Component} from "react";
 import "./App.css";
 import {Route, NavLink, Redirect} from "react-router-dom";
@@ -11,14 +12,11 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import userService from "./utils/userService";
 import SearchPage from "./pages/SearchPage/SearchPage";
 
-class App extends Component {
-constructor() {
-  super();
-  this.state = {
-    trips: [],
-    user: userService.getUser(),
-  };
-}
+function App() {
+const [trip, SetTrip]= useState('[]')
+  
+    const [user, SetUser]= useState (userService.getUser()),
+
 
 handleLogout = () => {
   userService.logout();
@@ -29,7 +27,7 @@ handleSignupOrLogin = () => {
   this.setState({user: userService.getUser()}, () => this.getTrips());
 }
 
-async getTrips () {
+async function getTrips () {
   let trips = await tripAPI.getAll();
   if (this.state.user) {
     trips = trips.filter((t) => t.user === this.state.user._id);
@@ -72,7 +70,7 @@ handleUpdateTrip = async updatedTripData => {
   );
 };
 
-render() {
+
   return(
     <div className="App">
       <header className="App-header">
@@ -179,7 +177,7 @@ render() {
     </div>
   );
 }
-}
+
 
 export default App;
 

@@ -1,25 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+import React, {Component} from "react";
+import "./App.css";
+import {Route, NavLink, Redirect} from "react-router-dom";
+import * as tripAPI from "./services/trips-api";
+import MyTripPage from "./components/MyTripPage/MyTripPage";
+import NewTripPage from "./components/NewTripPage/NewTripPage";
+import TripDetailPage from "./components/TripDetailPage/TripDetailPage";
+import EditTripPage from "./components/EditTripPage/EditTripPage";
+import SignupPage from "./pages/SignupPage/SignupPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import userService from "./utils/userService";
+import SearchPage from "./pages/SearchPage/SearchPage";

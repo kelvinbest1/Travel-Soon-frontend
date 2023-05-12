@@ -55,3 +55,19 @@ handleDeleteTrip = async id => {
     () => this.props.history.push("/")
   );
 };
+
+handleUpdateTrip = async updatedTripData => {
+  // If the updatedTrip id is the same as the tripAPI id, change out the 
+  // API and state with the updated version and return an array that has 
+  // all the other trips (unchanged) and our newly updated one
+  const updatedTrip = await tripAPI.update(updatedTripData);
+  const newTripsArray = this.state.trips.map(t => 
+    t._id === updatedTrip._id ? updatedTrip : t
+  );
+
+  this.setState(
+    {trips: newTripsArray},
+    () => this.props.history.push("/")
+  );
+};
+

@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import React, {Component} from "react";
+
 import {Link} from "react-router-dom";
 import "./EditTripPage.css"; 
 
-class EditTripPage extends Component {
+function EditTripPage() {
     const [invalidForm, setInvalidForm]= useState(false)
-        invalidForm: false,
-        formData: this.props.location.state.trip,
-    };
+    const [formData, setFormData]= useState(prop.location.state.trip)
+      
+    
 
     formRef = React.createRef();
 
-    handleSubmit = e => {
+    const handleSubmit = e => {
         e.preventDefault();
         this.props.handleUpdateTrip(this.state.formData);
     };
 
-    handleChange = e => {
+    const handleChange = e => {
         const formData = {
             ...this.state.formData,
             [e.target.name]: e.target.value,
@@ -27,7 +27,7 @@ class EditTripPage extends Component {
         });
     };
 
-    render() {
+    
         return (
             <>
                 <h1>Edit Trip</h1>
@@ -78,7 +78,7 @@ class EditTripPage extends Component {
                 </form>
             </>
         );
-    }
-}
+        }
+
 export default EditTripPage;
 

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import React, {Component} from "react";
+import React from "react";
 import "./App.css";
-import {Route, NavLink, Redirect} from "react-router-dom";
+import { Route, NavLink, Redirect } from "react-router-dom";
 import * as tripAPI from "./services/trips-api";
 import MyTripPage from "./components/MyTripPage/MyTripPage";
 import NewTripPage from "./components/NewTripPage/NewTripPage";
@@ -12,88 +11,77 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import userService from "./utils/userService";
 import SearchPage from "./pages/SearchPage/SearchPage";
 
-function App() {
-const [trip, SetTrip]= useState('[]')
-  
-    const [user, SetUser]= useState (userService.getUser()),
+const App = (props) => {
+  const [trips, setTrips] = useState([]);
+  const [user, setUser] = useState(userService.getUser());
 
+  useEffect(() => {
+    getTrips();
+  }, []);
 
-handleLogout = () => {
-  userService.logout();
-  this.setState({user: null, trips: []});
-}
+  const handleLogout = () => {
+    userService.logout();
+    setUser(null);
+    setTrips([]);
+  };
 
-handleSignupOrLogin = () => {
-  this.setState({user: userService.getUser()}, () => this.getTrips());
-}
+  const handleSignupOrLogin = () => {
+    setUser(userService.getUser());
+    getTrips();
+  };
 
-async function getTrips () {
-  let trips = await tripAPI.getAll();
-  if (this.state.user) {
-    trips = trips.filter((t) => t.user === this.state.user._id);
-  }
-  this.setState({trips});
-}
+  const getTrips = async () => {
+    let trips = await tripAPI.getAll();
+    if (user) {
+      trips = trips.filter((t) => t.user === user._id);
+    }
+    setTrips(trips);
+  };
 
-handleNewTrip = async newTripData => {
-  const newTrip = await tripAPI.create(newTripData);
-  this.setState(
-    state=> ({
-      trips: [...state.trips, newTrip],
-    }),
-    () => this.props.history.push("/")
-  );
-};
+  const handleNewTrip = async (newTripData) => {
+    const newTrip = await tripAPI.create(newTripData);
+    setTrips((prevTrips) => [...prevTrips, newTrip]);
+    props.history.push("/");
+  };
 
-handleDeleteTrip = async id => {
-  await tripAPI.deleteTrip(id);
-  this.setState(
-    state => ({
-      trips: state.trips.filter(t => t._id !== id),
-    }),
-    () => this.props.history.push("/")
-  );
-};
+  const handleDeleteTrip = async (id) => {
+    await tripAPI.deleteTrip(id);
+    setTrips((prevTrips) => prevTrips.filter((t) => t._id !== id));
+    props.history.push("/");
+  };
 
-handleUpdateTrip = async updatedTripData => {
-  // If the updatedTrip id is the same as the tripAPI id, change out the 
-  // API and state with the updated version and return an array that has 
-  // all the other trips (unchanged) and our newly updated one
-  const updatedTrip = await tripAPI.update(updatedTripData);
-  const newTripsArray = this.state.trips.map(t => 
-    t._id === updatedTrip._id ? updatedTrip : t
-  );
+  const handleUpdateTrip = async (updatedTripData) => {
+    const updatedTrip = await tripAPI.update(updatedTripData);
+    const newTripsArray = trips.map((t) =>
+      t._id === updatedTrip._id ? updatedTrip : t
+    );
+    setTrips(newTripsArray);
+    props.history.push("/");
+  };
 
-  this.setState(
-    {trips: newTripsArray},
-    () => this.props.history.push("/")
-  );
-};
-
-
-  return(
+  return (
     <div className="App">
       <header className="App-header">
-        Make your next trip unforgettable. 
+        Make your next trip unforgettable.
         <nav>
-          <NavLink user={this.props.user}exact to="/">
+          <NavLink user={props.user} exact to="/">
             My Trips
           </NavLink>
-          &nbsp;&nbsp;&nbsp;
+
           <NavLink exact to="/add">
             New Trip
           </NavLink>
-          &nbsp;&nbsp;&nbsp;
+
           <NavLink exact to="/search">
             Search Camps
           </NavLink>
-          &nbsp;&nbsp;&nbsp;
+
           <NavLink exact to="/signup">
             Create Profile
           </NavLink>
-          &nbsp;&nbsp;&nbsp;
-          {this.state.user ? (
-            <NavLink exact to="/login" onClick={this.handleLogout}>
+
+          {user ? (
+            <NavLink exact to="/login" onClick={handleLogout}>
               Logout
             </NavLink>
           ) : (
@@ -105,79 +93,78 @@ handleUpdateTrip = async updatedTripData => {
       </header>
       <main>
         <Route
-          exact path="/" render={() => (
-            userService.getUser() ?
+          exact
+          path="/"
+          render={() =>
+            userService.getUser() ? (
               <MyTripPage
-                trips={this.state.trips}
-                user={this.state.user} 
-                handleDeleteTrip={this.handleDeleteTrip}
-                handleLogout={this.handleLogout}
+                trips={trips}
+                user={user}
+                handleDeleteTrip={handleDeleteTrip}
+                handleLogout={handleLogout}
               />
-              :
-              <Redirect to="/login"
-              />
+            ) : (
+              <Redirect to="/login" />
+            )
+          }
+        />
+        <Route
+          exact
+          path="/add"
+          render={() => (
+            <NewTripPage user={user} handleNewTrip={handleNewTrip} />
           )}
         />
-        {/* <Route path='/users/:id' render={(props) => (
-            userService.getUser() ?
-              <MyTripPage 
-                trips={this.state.user.trips}
-                user={this.state.user} 
-                handleDeleteTrip={this.handleDeleteTrip}
-                handleLogout={this.handleLogout}
-              />
-            :
-              <Redirect to='/login' />
-          )}/> */}
         <Route
-          exact path="/add"
-          render={() => <NewTripPage user={this.state.user} handleNewTrip={this.handleNewTrip} />}
+          exact
+          path="/details"
+          render={({ location }) => <TripDetailPage location={location} />}
         />
-        <Route 
-          exact path="/details" 
-          render={({location}) => <TripDetailPage location={location} />}
+        <Route
+          exact
+          path="/search"
+          render={({ location }) => <SearchPage location={location} />}
         />
-        <Route 
-          exact path="/search" 
-          render={({location}) => <SearchPage location={location} />}
-        />
-        <Route 
-          exact path="/edit" render={({location}) => (
+        <Route
+          exact
+          path="/edit"
+          render={({ location }) => (
             <EditTripPage
-              handleUpdateTrip={this.handleUpdateTrip}
+              handleUpdateTrip={handleUpdateTrip}
               location={location}
             />
           )}
         />
-        <Route 
-          exact path="/signup" render={({history}) => (
+        <Route
+          exact
+          path="/signup"
+          render={({ history }) => (
             <SignupPage
               history={history}
-              handleSignupOrLogin={this.handleSignupOrLogin}
+              handleSignupOrLogin={handleSignupOrLogin}
             />
-          )} 
+          )}
         />
-        <Route 
-          exact path="/login" render={({history}) => (
+        <Route
+          exact
+          path="/login"
+          render={({ history }) => (
             <LoginPage
-              handleSignupOrLogin={this.handleSignupOrLogin}
+              handleSignupOrLogin={handleSignupOrLogin}
               history={history}
             />
-          )} 
+          )}
         />
-        <Route 
-          exact path="/logout" render={({history}) => (
-            <LoginPage
-              handleLogout={this.handleLogout}
-              history={history}
-            />
-          )} 
+        <Route
+          exact
+          path="/logout"
+          render={({ history }) => (
+            <LoginPage handleLogout={handleLogout} history={history} />
+          )}
         />
       </main>
     </div>
   );
-}
-
+};
 
 export default App;
-

@@ -7,7 +7,7 @@ function MyTripPage(props) {
         <>
             <h1>My Trips</h1>
             <div className="MyTripPage-grid">
-                {props.trips.map(trip => (
+                {props?.trips.map(trip => (
                     <TripListItem
                         trip={trip} 
                         key={trip._id}

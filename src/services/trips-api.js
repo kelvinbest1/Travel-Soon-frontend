@@ -4,6 +4,7 @@ export function getAll() {
     return fetch(BASE_URL).then(res => res.json());
 }
 
+
 export function create(trip) {
     return fetch(BASE_URL, {
         method: "POST",
